@@ -18,34 +18,33 @@ timezone:
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Chirpy # the main title
+title: Gaurav Singh # the main title
 
-tagline: A text-focused Jekyll theme # it will display as the sub-title
+tagline: Let's start learning # it will display as the sub-title
 
-description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+description: A technical blog on concepts of programming language and design.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: "https://singhgaurav1302.github.io"
 
 github:
-  username: github_username # change to your github username
+  username: singhgaurav1302 # change to your github username
 
 twitter:
-  username: twitter_username # change to your twitter username
+  username: # change to your twitter username
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: Gaurav Singh
-  email: example@domain.com # change to your email address
+  email: singhgaurav1302@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your twitter homepage
-    - https://github.com/username # change to your github homepage
+    - https://www.linkedin.com/in/singhgaurav1302
+    - https://github.com/singhgaurav1302 # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    # - https://twitter.com/username # change to your twitter homepage
 
 google_site_verification: # fill in to your verification string
 
@@ -66,7 +65,7 @@ google_analytics:
 #     light  - Use the light color scheme
 #     dark   - Use the dark color scheme
 #
-theme_mode: light # [light|dark]
+theme_mode: # [light|dark]
 
 # The CDN endpoint for images.
 # Notice that once it is assigned, the CDN url

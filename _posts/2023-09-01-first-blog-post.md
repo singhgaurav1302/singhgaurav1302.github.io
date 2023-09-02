@@ -1,8 +1,11 @@
 ---
 layout: post
 title: "First Blog Post !!!"
+categories: jekyll
 tags:
   first-blog
+  jekyll
+  chirpy-starter
 ---
 
 ### Welcome To My First Tech Blog
