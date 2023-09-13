@@ -7,11 +7,11 @@ from datetime import date
 def get_front_matter():
     front_matter = '''\
 ---
-layout: [post|draft]
+authors: [<author>]
+layout: post
 title: <title>
-categories: <categories>
-tags:
-  <tag>
+categories: [<categories>]
+tags: [<tag>]
 ---
 '''
     return front_matter
