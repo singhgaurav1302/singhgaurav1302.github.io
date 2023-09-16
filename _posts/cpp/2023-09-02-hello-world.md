@@ -1,4 +1,5 @@
 ---
+authors: [gaurav]
 layout: post
 title: Hello World
 categories: [cpp]
