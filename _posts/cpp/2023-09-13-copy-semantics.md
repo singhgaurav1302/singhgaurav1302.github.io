@@ -6,14 +6,23 @@ categories: [cpp]
 tags: [c++, c++98, c++03, copy, copy-constructor, copy-semantics]
 ---
 
-Copy semantics refer to the rules and mechanisms by which objects are copied or cloned when they
-are assigned to another object or passed as function arguments. It creates objects that are
-`equivalent` and `independent` i.e
+Copy semantics are the rules and mechanisms governing how objects are duplicated or cloned when
+they're assigned to another object or passed as function arguments. These rules ensure that the
+objects are `equal` and `independent`.
 
-1. `source == destination`
-2. modification to one object does not cause modification to other
+1. `Equality`: The original object (referred to as the "source") and the new object (the
+   "destination") have identical content, `source == destination`. In other words, they are equal
+   in terms of their values or state.
+2. `Independent`: Modifications made to one object do not affect the other. They remain separate and
+   independent instances, even though they might contain the same initial data.
 
-{: file="copy.cpp" }
+## Implicit Copy
+
+Implicit copying is a process where a copy of an object is created automatically by the programming
+language or compiler without explicit instructions from the programmer. This behavior is common for
+the objects which follow `value semantics`.
+
+{: file="implicit_copy.cpp" }
 
 ```c++
 #include <cassert>
@@ -23,36 +32,79 @@ struct Rectangle {                // plain old datatypes (POD)
     int breadth;
 };
 
-int area(Rectangle r) {           // pass by value, implicit copy
+int area(Rectangle r) {
     return r.length * r.breadth;
 }
 
 int main() {
     int x = 10;
-    int y = x;                   // 1. construct, implicit copy
+    int y = x;                   // 1. implicit copy of the value
     assert(x == y);
 
     Rectangle rect {10, 20};
-    assert(area(rect) == 200);   // 2. call area,
+    assert(area(rect) == 200);   // 2. implicit copy, pass by value
 }
 ```
 
-1. `int y = x;` copies the value `10` from variable `x` to `y`.
-2. call to a function `area(rect)` copies values stored in `rect.length` and `rect.breadth` to
-parameter `r.length` and `r.breadth`
+1. In this example value of `x` is implicitly copied to `y`. If you later modify `y`, it does not
+   affect the value of `x`.
+2. Similarly while calling a function `area(rect)`, `rect` is implicitly copied to `r`.
 
-By default compiler generates a default copy constructor and a default copy assignment operator if
-required, which performs `member wise copy` i.e it copies each member from source to destination.
+To facilitate implicit copying, the compiler internally generates default copy constructors and
+copy assignment operators, as needed. These generated functions perform a "member-wise copy",
+meaning they copy each member from the source object to the destination object.
 
-In case of basic datatypes such as `int` it is just copying a single value `y = x` and in case of
-plain old datatypes (POD) it copies each member variable from source to destination `r = rect`.
-
-This is also known as `shallow copy`. For basic datatypes and POD this is not an issue. But for user
-defined classes/structures which include pointer member variables, this can be problematic.
+Implicit copying behaves as expected for basic data types like int and plain old data types.
+However, it's crucial to be mindful of potential side effects when dealing with pointers.
 
 ## Shallow Copy
 
 {: file="shallow_copy.cpp" }
+
+```c++
+#include <cassert>
+
+int main() {
+    int* srcPtr = new int(10);   // 1. memory allocation and initialization
+    int* destPtr = srcPtr;       // 2. copy value from srcPtr to destPtr
+
+    assert(srcPtr == destPtr);
+    assert(*srcPtr == *destPtr);
+
+    *destPtr = 20;
+    assert(*srcPtr == 20);       // 3. changes reflected in other object
+
+    delete srcPtr;
+    delete destPtr;              // 4. dangling pointer, double free
+}
+```
+
+{: file="output" }
+{: .nolineno }
+
+```bash
+g++ -std=c++11 -fsanitize=address shallow_copy.cpp && ./a.out
+
+=================================================================
+==18713==ERROR: AddressSanitizer: attempting double-free on 0x602000000010 in thread T0:
+    #0 0x7fb4d741c650 in operator delete(void*)
+```
+
+In this example, we show the potential issues with implicit copying using pointers:
+
+1. `srcPtr` allocates memory on the heap and initializes it with the value 10.
+2. `destPtr` is assigned the memory address from srcPtr, so both pointers point to the same memory.
+3. `No independent modifications`: Modifying one pointer (e.g., *destPtr = 20) affects the other
+   (*srcPtr), as they point to the same memory location..
+4. `Double free`: Deleting `srcPtr` frees the associated memory. However, `destPtr` is left as a
+   dangling pointer because it still points to the now-deleted memory. Attempting to delete
+   `destPtr` would lead to a double-free issue, causing undefined behavior.
+5. `Undefined behavior`: Any operations on `destPtr` after the memory is freed can result in
+   undefined behavior because the memory is no longer valid.
+
+Similar example with user defined structure.
+
+{: file="shallow_copy_struct.cpp" }
 
 ```c++
 #include <cstddef>
@@ -83,37 +135,21 @@ int main() {
 {: .nolineno }
 
 ```bash
-g++ -std=c++11 -fsanitize=address shallow_copy.cpp && ./a.out
+g++ -std=c++11 -fsanitize=address shallow_copy_struct.cpp && ./a.out
 
 =================================================================
 ==11528==ERROR: AddressSanitizer: attempting double-free on 0x604000000010 in thread T0:
     #0 0x7ff4a3010780 in operator delete[](void*)
 ```
 
-As described earlier, compiler provided copy constructor performs member by member copy i.e
-`arr_copy.m_ptr = arr.m_ptr`.
-
-So now `m_ptr` of both the objects are pointing to the same address. And this is bad.
-
-1. `No independent modifications`: Changes done through `arr.m_ptr` will be reflected in
-   `arr_copy.m_ptr` and vice-versa
-2. `Undefined behavior`: Due to limited scope `arr_copy` is destroyed first resulting in deletion of
-   memory pointed by `arr_copy.m_ptr`. Now any operation done through `arr.m_ptr` will result in
-   undefined behavior since the memory block to which `arr.m_ptr` is pointing is already deleted.
-   Pointing to deleted memory is also known as `dangling pointer`.
-3. `Double free`: At the end of the program both objects go out of scope and are destroyed. Since
-   both the pointers are pointing to the same memory this results in deletion of the same memory
-   twice and we can see this error in the output.
-
-To deal with such issues we need `deep copy`.
+To avoid the issues of implicit copying with pointers, especially when dealing with dynamic memory
+allocation, it's often necessary to implement deep copy mechanisms that duplicate not only the
+pointers but also the data they point to, ensuring independent and safe handling of objects.
 
 ## Deep Copy
 
-Issue with shallow copy was it simply copies the values directly even in case of pointer variables.
-To fix this deep copy first allocates a sepearate memory to pointer member variables and then
-copies the contents stored from source memory address to the newly allocated memory address.
-Now each copy contains its own unique set of data, even if that data includes references or
-pointers to other objects.
+Deep copy involves recreating both the object and the data it holds, guaranteeing that
+modifications in one instance don't impact others.
 
 Deep copy is implemented explicitly by the programmer by providing user defined `copy constructor`
 and `copy assignment operator`.
@@ -149,7 +185,7 @@ int main() {
     {
         DynamicArray arr_copy(arr);  // Invokes copy constructor
     }
-    printArray(arr);             // creates a temporary copy of arr and passes to printArray
+    printArray(arr);                 // creates a copy of arr and passes to printArray
 }
 ```
 
@@ -161,7 +197,7 @@ int main() {
 
 Canonical signature of copy constructor is `DynamicArray(const DynamicArray& o)`.
 
-If it will recieve the argument by pass by value, then when copy constrcutor is invoked it will need
+If it will receive the argument by pass by value, then when copy constructor is invoked it will need
 a copy of the argument which will in turn invoke the copy constructor, which would again call the
 copy constructor and this will continue recursively until stack is full.
 
@@ -169,7 +205,7 @@ So it takes a parameter by reference.
 
 ### Why Copy Constructor Takes Const Argument
 
-To avoid accidental modfications to the source object. Also const reference `const &` allows copy
+To avoid accidental modifications to the source object. Also const reference `const &` allows copy
 constructor to receive `temporary objects`.
 
 ### Copy Assignment
@@ -192,8 +228,7 @@ the same memory.
 {: file="copy_assignment.cpp" }
 
 ```c++
-DynamicArray& operator=(const DynamicArray& o)
-{
+DynamicArray& operator=(const DynamicArray& o) {
     if (this == &o) {            // 1. prevents self assignment, arr = arr
         return *this;
     }
@@ -211,7 +246,7 @@ int main() {
 }
 ```
 
-Implentation of copy constructor and copy assignment operator is almost same with three small but
+Implementation of copy constructor and copy assignment operator is almost same with three small but
 important differences.
 
 1. Self assignment check `if (this == &o)`: Statement such as `arr = arr` is a self assignment, if
@@ -220,7 +255,7 @@ important differences.
 2. Delete pre-allocated memory `delete[] m_ptr;`: In assignment both the object already exist and
    `m_ptr` might be pointing to valid memory. Allocating new memory without delete will result in
    memory leak.
-3. `return *this;`:  Returning reference to self is not mandatory but then you cannot perform
+3. `return *this;`: Returning reference to self is not mandatory but then you cannot perform
    assignment chaining `(a = b = c)`.
 
 ## Note
@@ -241,6 +276,6 @@ Copy semantics is an important concept but it has its own downsides. For smaller
 it is tolerable, but for larger ones, it leads to noticeable performance degradation due to the
 creation of numerous temporary copies.
 
-To address this inefficiency, c++11 introduced the concept of `move semantics`. If you're a
-technical enthusiast looking to optimize your code and understand the inner workings of move
+To address this inefficiency, c++11 introduced the concept of `move semantics`. If you're
+looking to optimize your code and understand the inner workings of move
 semantics, dive into our next blog on the topic.
