@@ -3,7 +3,7 @@ authors: [gaurav]
 layout: post
 title: Copy Semantics
 categories: [cpp]
-tags: [c++, c++98, c++03, copy, copy-constructor, copy-semantics]
+tags: [c++, c++98, c++03, copy, copy constructor, copy semantics]
 ---
 
 Copy semantics are the rules and mechanisms governing how objects are duplicated or cloned when

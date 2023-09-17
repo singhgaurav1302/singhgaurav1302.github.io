@@ -3,7 +3,7 @@ authors: [gaurav]
 layout: post
 title: Hello World
 categories: [cpp]
-tags: [c++, hello-world]
+tags: [c++, hello world]
 ---
 
 Welcome to the world of C++ programming! This is a very simple example which will print the classic
