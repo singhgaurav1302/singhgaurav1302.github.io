@@ -1,18 +1,14 @@
 ---
 layout: post
-title: "First Blog Post !!!"
+title: First Blog Post !!!
 categories: jekyll
-tags:
-  first blog
-  jekyll
-  chirpy starter
+tags: [first blog, jekyll, chirpy starter]
 ---
 
 ### Welcome To My First Tech Blog
 
 Let me tell you a quick story about why I'm starting this friendly tech blog. It all boils down to
 a simple truth: in the world of technology and programming, we learn, we forget and then we relearn.
-
 
 ### Forget-Me-Not Dilemma
 
@@ -26,7 +22,6 @@ learned. This blog is my way of capturing those "Aha!" moments and helping you d
 
 So, let's dive in, make tech fun, and turn those forgetful moments into stepping stones on our
 exciting learning path. Stay tuned for more tech adventures!
-
 
 _Mitron, aaj hum ek aise digital notes recording platform se judne ja rahe hain, jahan se hum sab
 ek sath judkar knowledge ko ek naye andaz me samet sakte hain. Yeh hai digital notes ki taqat!_
