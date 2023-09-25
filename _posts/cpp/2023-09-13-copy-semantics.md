@@ -16,6 +16,29 @@ objects are `equal` and `independent`.
 2. `Independent`: Modifications made to one object do not affect the other. They remain separate and
    independent instances, even though they might contain the same initial data.
 
+{: file="basic_copy.cpp"}
+
+```c++
+int main() {
+    int a = 10;
+    int b = a;
+    assert(x == y);
+
+    Minion kevin {};
+    Minion stuart = kevin;
+    assert(kevin == stuart);
+
+    BigGodzilla balu {};
+    BigGodzilla kalu {}
+    kalu = balu;
+    assert(kalu == balu);
+}
+```
+
+So basic concept of copy is very simple, whether you have a fundamental datatype like `int`, small
+structures like `Minion` or huge structures like `BigGodzilla` after the assignment operation `=`
+both the objects should have same contents.
+
 ## Implicit Copy
 
 Implicit copying is a process where a copy of an object is created automatically by the programming
