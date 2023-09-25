@@ -75,7 +75,7 @@ theme_mode: # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: /assets/img/avatar/gaurav.jpeg
 
 # boolean type, the global switch for TOC in posts.
 toc: true
